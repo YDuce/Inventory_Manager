@@ -68,9 +68,7 @@
 
 ## 4. Explicit Data Models & Schema
 
-* **Database:** SQLite (dev), PostgreSQL (prod).
-  See [docs/dev_db_policy.md](docs/dev_db_policy.md) for local setup details
-  including how to run Postgres with `docker-compose` during testing or CI.
+* **Database:** SQLite only for the MVP.
 * **Datetime:** ISO-8601 explicitly timezone-aware.
 
 | Model        | Fields                                                                            | Constraints & Indices       |
@@ -86,6 +84,27 @@
 
 * `APP_SECRET_KEY` – secret key for JWT signing
 * `APP_DATABASE_URL` – database URL (defaults to SQLite if unset)
+* `APP_WEBHOOK_SECRETS` – comma-separated HMAC keys for ShipStation webhook verification
+* `APP_SERVICE_ACCOUNT_FILE` – path to Google service account JSON used for Drive and Sheets access
+* `APP_WEBHOOK_SECRETS_FILE` – optional path to a file containing HMAC secrets (one per line)
+* `APP_REDIS_URL` – Redis connection string used for concurrency locks and rate limiting
+* `APP_MAX_PAYLOAD` – maximum allowed ShipStation webhook payload size in bytes (defaults to 1024)
+
+### Local Redis Setup
+
+Install Redis locally (e.g., `sudo apt-get install redis-server`) and start it:
+
+```bash
+redis-server --daemonize yes
+```
+
+Set `APP_REDIS_URL=redis://localhost:6379/0` before running the application or tests.
+
+### Getting Started
+
+1. `cp .env.example .env`
+2. Fill in any secrets in `.env`.
+3. `docker-compose up` or `flask run`
 
 ## 5. Technical Specifications
 
@@ -94,11 +113,13 @@
 * Explicitly HMAC SHA256 signed; header: `X-ShipStation-Signature`.
 * Secrets explicitly managed and rotated quarterly.
 * Webhook idempotency and 5-minute replay window enforced.
+* Payloads over 1024 bytes are rejected with HTTP 413.
 
 ### 5.2 API & Authorization
 
 * RESTful API explicitly versioned (`/api/v1/...`).
 * Explicit JWT authentication (HS256, 24-hour expiry).
+* JWT payload includes `sub`, `org_id`, and `roles` claims.
 * RBAC explicitly defined for organisational roles and channel permissions.
 
 ### 5.3 Concurrency & Rate Limiting
@@ -161,3 +182,23 @@ inventory-manager-app/
 5. Explicitly remove legacy complexities.
 6. Establish explicit Docker-based CI/CD.
 7. Implement explicit channel registration.
+
+## 8. CI Pipeline
+
+The CI job runs the following checks:
+
+```bash
+scripts/ci.sh
+```
+
+This script performs an Alembic upgrade/downgrade, verifies Redis connectivity,
+runs linting with ruff and flake8, mypy type checking in strict mode, and
+executes the pytest suite with coverage (fail under 85%).
+
+## 9. Running Tests Locally
+
+Tests run exclusively on SQLite for the MVP phase.
+
+```bash
+pytest --cov
+```

@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone
 
-from sqlalchemy import ForeignKey, String
+from sqlalchemy import ForeignKey, String, DateTime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from typing import TYPE_CHECKING
 
@@ -21,5 +21,7 @@ class OrderRecord(Base):
         ForeignKey("product.sku"), nullable=False, index=True
     )
     quantity: Mapped[int] = mapped_column()
-    ordered_date: Mapped[datetime] = mapped_column(default=datetime.utcnow)
+    ordered_date: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
+    )
     product: Mapped["Product"] = relationship(back_populates="orders")
