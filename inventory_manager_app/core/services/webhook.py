@@ -73,6 +73,7 @@ class WebhookService:
             return "invalid signature", 403
 
         from inventory_manager_app.core.schemas import OrderPayload
+
         try:
             payload_data = OrderPayload.model_validate(data)
         except Exception as exc:
@@ -86,9 +87,11 @@ class WebhookService:
             else:
                 ordered_dt = ordered_date
 
-            order = self.db.query(OrderRecord).filter_by(
-                order_id=payload_data.order_id
-            ).first()
+            order = (
+                self.db.query(OrderRecord)
+                .filter_by(order_id=payload_data.order_id)
+                .first()
+            )
             if order:
                 order.channel = payload_data.channel
                 order.product_sku = payload_data.product_sku
@@ -107,10 +110,9 @@ class WebhookService:
 
             # generate insights for this product
             from .insights import InsightsService
+
             product = (
-                self.db.query(Product)
-                .filter_by(sku=payload_data.product_sku)
-                .first()
+                self.db.query(Product).filter_by(sku=payload_data.product_sku).first()
             )
             if product:
                 InsightsService(self.db).update_for_product(product)
