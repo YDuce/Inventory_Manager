@@ -65,11 +65,14 @@ def test_reallocation_duplicate(tmp_path, monkeypatch):
     token = create_token_for(app)
     headers = {"Authorization": f"Bearer {token}"}
     with app.test_client() as client:
-        assert client.post(
-            "/api/v1/reallocations",
-            json={"sku": "DUP", "channel_origin": "amazon", "reason": "slow-mover"},
-            headers=headers,
-        ).status_code == 201
+        assert (
+            client.post(
+                "/api/v1/reallocations",
+                json={"sku": "DUP", "channel_origin": "amazon", "reason": "slow-mover"},
+                headers=headers,
+            ).status_code
+            == 201
+        )
         resp = client.post(
             "/api/v1/reallocations",
             json={"sku": "DUP", "channel_origin": "amazon", "reason": "slow-mover"},
@@ -84,9 +87,7 @@ def _seed_product(app):
     from inventory_manager_app.core.models import Product
 
     with app.app_context():
-        db.session.add(
-            Product(sku="SKU1", name="Prod", channel="amazon", quantity=1)
-        )
+        db.session.add(Product(sku="SKU1", name="Prod", channel="amazon", quantity=1))
         db.session.commit()
 
 

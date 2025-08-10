@@ -5,6 +5,7 @@ from __future__ import annotations
 from inventory_manager_app.tests.utils import create_test_app, create_token_for
 from inventory_manager_app.tests.test_services import DummyCaller, FakeRedis
 
+
 def test_create_and_list_org(tmp_path, monkeypatch):
     dummy = DummyCaller()
 

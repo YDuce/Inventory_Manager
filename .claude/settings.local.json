@@ -2,7 +2,14 @@
   "permissions": {
     "allow": [
       "Bash(gh:*)",
-      "Bash(where gh)"
+      "Bash(where gh)",
+      "Bash(cmd /c \"gh --version\")",
+      "Bash(mkdir:*)",
+      "Bash(cp:*)",
+      "Bash(python:*)",
+      "Bash(pip install:*)",
+      "Bash(git checkout:*)",
+      "Bash(git add:*)"
     ],
     "deny": []
   }

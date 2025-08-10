@@ -1,19 +1,19 @@
 # requirements.txt contents:
 
 # Core Flask
-Flask==3.0.2
-Werkzeug>=3.0,<3.1
+Flask==3.1.1
+Werkzeug>=3.1.0
 Flask-SQLAlchemy==3.1.1
 Flask-Login==0.6.3
 Flask-CORS==6.0.0
 Flask-Talisman==1.1.0
-Flask-Migrate==4.0.5
+Flask-Migrate==4.1.0
 Flask-Dance==7.0.0
 
 # Database / migrations
-SQLAlchemy==2.0.27
-alembic==1.13.1
-psycopg2-binary==2.9.9
+SQLAlchemy==2.0.42
+alembic==1.16.4
+# psycopg2-binary==2.9.9  # Not needed for SQLite
 
 # Auth & security
 PyJWT==2.8.0

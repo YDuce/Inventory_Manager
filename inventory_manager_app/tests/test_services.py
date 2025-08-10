@@ -163,6 +163,7 @@ def test_webhook_process_success(tmp_path, monkeypatch):
             )
         )
         from inventory_manager_app.core.models import Product
+
         db.session.add(Product(sku="SKU1", name="P", channel="amazon"))
         db.session.commit()
 
@@ -172,6 +173,7 @@ def test_webhook_process_success(tmp_path, monkeypatch):
         assert code == 204
         assert OrderRecord.query.filter_by(order_id="OID1").count() == 1
         from inventory_manager_app.core.models import Insight
+
         assert Insight.query.filter_by(product_sku="SKU1").count() == 1
         assert dummy.called
 

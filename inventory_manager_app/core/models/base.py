@@ -12,7 +12,9 @@ if TYPE_CHECKING:
         __abstract__ = True
         id: Mapped[int]
         query: Query[Any]
+
 else:
+
     class Base(db.Model):
         __abstract__ = True
         id: Mapped[int] = mapped_column(Integer, primary_key=True)
